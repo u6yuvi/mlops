@@ -1,6 +1,10 @@
-FROM ubuntu:latest
+FROM python:3.9.16-slim-buster
+
+RUN pip3 install torch==1.12.1 torchvision==0.13.1 --no-cache-dir --index-url https://download.pytorch.org/whl/cpu
 
 WORKDIR /workspace
 COPY train.py /workspace/
 
-CMD ["python", "train.py"]
+
+CMD ["sh"]
+# CMD ["python", "train.py"]
