@@ -6,5 +6,6 @@ WORKDIR /workspace
 COPY train.py /workspace/
 
 
-CMD ["sh"]
-# CMD ["python", "train.py"]
+CMD ["black", "train.py"]
+
+CMD ["python", "train.py"]
