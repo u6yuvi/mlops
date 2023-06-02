@@ -9,6 +9,26 @@ from torch.utils.data import DataLoader
 import torch.multiprocessing as mp
 
 
+def save_model(EPOCH, model, optimizer, path):
+    print("save")
+    torch.save(
+        {
+            "epoch": EPOCH,
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+        },
+        path,
+    )
+
+
+def load_model(path, model, optimizer):
+    checkpoint = torch.load(path)
+    model.load_state_dict(checkpoint["model_state_dict"])
+    optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+    epoch = checkpoint["epoch"]
+    return model, optimizer
+
+
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -28,16 +48,15 @@ class Net(torch.nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-def train(rank, args, model, device, dataset, dataloader_kwargs):
+def train(rank, args, model, device, dataset, optimizer, dataloader_kwargs):
     torch.manual_seed(args.seed + rank)
 
     train_loader = torch.utils.data.DataLoader(dataset, **dataloader_kwargs)
 
-    optimizer = optim.SGD(
-        model.parameters(), lr=args.lr, momentum=args.momentum
-    )
     for epoch in range(1, args.epochs + 1):
         train_epoch(epoch, args, model, device, train_loader, optimizer)
+        print("a")
+        save_model(epoch, model, optimizer, "./model_checkpoint.pth")
 
 
 def test(args, model, device, dataset, dataloader_kwargs):
@@ -116,7 +135,7 @@ def main():
     parser.add_argument(
         "--epochs",
         type=int,
-        default=1,
+        default=2,
         metavar="N",
         help="number of epochs to train (default: 10)",
     )
@@ -166,6 +185,12 @@ def main():
         action="store_true",
         default=False,
         help="quickly check a single pass",
+    ),
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        default=False,
+        help="Load model from a saved checkpoint path",
     )
 
     args = parser.parse_args()
@@ -175,6 +200,7 @@ def main():
     transform = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
     )
+
     dataset1 = datasets.MNIST(
         "../data", train=True, download=True, transform=transform
     )
@@ -189,15 +215,19 @@ def main():
     mp.set_start_method("spawn")
 
     model = Net().to(device)
-
-    optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
+    optimizer = optim.SGD(
+        model.parameters(), lr=args.lr, momentum=args.momentum
+    )
+    if args.resume:
+        model, optimizer = load_model("model_checkpoint.pth", model, optimizer)
 
     model.share_memory()  # gradients are allocated lazily, so they are not shared here
 
     processes = []
     for rank in range(args.num_processes):
         p = mp.Process(
-            target=train, args=(rank, args, model, device, dataset1, kwargs)
+            target=train,
+            args=(rank, args, model, device, dataset1, optimizer, kwargs),
         )
         # We first train the model across `num_processes` processes
         p.start()
@@ -207,12 +237,6 @@ def main():
 
     # Once training is complete, we can test the model
     test(args, model, device, dataset2, kwargs)
-    # TODO: Add a way to load the model checkpoint if 'resume' argument is True
-
-    # TODO: Choose and define the optimizer here
-
-    # TODO: Implement the training and testing cycles
-    # Hint: Save the model after each epoch
 
 
 if __name__ == "__main__":
