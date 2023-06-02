@@ -153,10 +153,7 @@ def main():
     checkpoint = {
             'epoch': epoch,
             'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': optimizer.state_dict(),
-            'train_loss': loss.item(),
-            'test_loss': test_loss,
-            'accuracy': accuracy
+            'optimizer_state_dict': optimizer.state_dict()
         }
     torch.save(checkpoint, args.checkpoint_path)
     print(f"Model saved at epoch {epoch}")
