@@ -56,7 +56,7 @@ def train(rank, args, model, device, dataset, optimizer, dataloader_kwargs):
     for epoch in range(1, args.epochs + 1):
         train_epoch(epoch, args, model, device, train_loader, optimizer)
         print("a")
-        save_model(epoch, model, optimizer, "./model_checkpoint.pth")
+        save_model(epoch, model, optimizer, "./workspace/model_checkpoint.pth")
 
 
 def test(args, model, device, dataset, dataloader_kwargs):
@@ -219,7 +219,7 @@ def main():
         model.parameters(), lr=args.lr, momentum=args.momentum
     )
     if args.resume:
-        model, optimizer = load_model("model_checkpoint.pth", model, optimizer)
+        model, optimizer = load_model("./workspace/model_checkpoint.pth", model, optimizer)
 
     model.share_memory()  # gradients are allocated lazily, so they are not shared here
 
