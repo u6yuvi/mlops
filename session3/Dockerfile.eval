@@ -2,4 +2,4 @@ FROM u6yuvi/pytorch-cpu
 
 WORKDIR /workspace
 
-#COPY 
+COPY eval.py /workspace 

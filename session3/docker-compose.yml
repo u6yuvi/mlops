@@ -11,17 +11,20 @@ services:
     command: bash -c "make run-training"
     # command: python train.py add cli args here as to where the model is supposed to be stored
 
-  # evaluate:
-  #   image: 
+  evaluate:
+    build:
+      context: ./
+      dockerfile: Dockerfile.eval
 
-  #   # Mount volumes
-  #   # volumes:
-  #   #   - ./data:/workspace/data
-  #   # also mount the mnist volume
-  #   # ...
+    #Mount volumes
+    volumes:
+      - ./data:/workspace/data
+      - ./model:/workspace/model
+    command: python eval.py
+    #also mount the mnist volume
 
-  #   # Run the evaluation command
-  #   # command: python eval.py maybe add command line argument here, like where the model is located
+    # Run the evaluation command
+    # command: python eval.py maybe add command line argument here, like where the model is located
 
   # infer:
   #   # Build the inference service
