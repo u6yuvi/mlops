@@ -11,7 +11,7 @@ import concurrent.futures
 import time
 from model import Net
 # Create requests directory if it doesn't exist
-os.makedirs('requests', exist_ok=True)
+os.makedirs('./mnist/results', exist_ok=True)
 
 # Load MNIST dataset
 dataset = datasets.MNIST('./mnist/data', train=False, download=True)

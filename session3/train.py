@@ -8,6 +8,13 @@ from torch.utils.data import DataLoader
 from model import Net
 from pathlib import Path
 
+model_path = "./mnist/model/"
+data_path = "./mnist/data/"
+if not os.path.exists(model_path):
+    os.makedirs("./mnist/model/")
+if not os.path.exists(data_path):
+    os.makedirs("./mnist/data/")
+
 def train_epoch(epoch, args, model, device, data_loader, optimizer):
     model.train()
     pid = os.getpid()

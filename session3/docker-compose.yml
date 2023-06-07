@@ -5,11 +5,11 @@ services:
       context: ./
       dockerfile: Dockerfile.train
     volumes:
-      # - mnist:/workspace/mnist
+      - mnist:/workspace/mnist
       # - ./mnist/model:/workspace/mnist/model
       # - ./mnist/data:/workspace/mnist/data
-      - mnist/model:/workspace/mnist/model
-      - mnist/data:/workspace/mnist/data
+      # - mnist/model:/workspace/mnist/model
+      # - mnist/data:/workspace/mnist/data
     restart: on-failure
     command: python train.py --resume
     # command: python train.py add cli args here as to where the model is supposed to be stored
@@ -21,11 +21,11 @@ services:
 
     #Mount volumes
     volumes:
-      # - mnist:/workspace/mnist
+      - mnist:/workspace/mnist
       # - ./mnist/data:/workspace/mnist/data
       # - ./mnist/model:/workspace/mnist/model
-      - mnist/data:/workspace/mnist/data
-      - mnist/model:/workspace/mnist/model
+      # - mnist/data:/workspace/mnist/data
+      # - mnist/model:/workspace/mnist/model
     command: python eval.py
     #also mount the mnist volume
 
@@ -39,10 +39,10 @@ services:
 
     #Mount volumes
     volumes:
-      # - mnist:/workspace/mnist
-      - mnist/data:/workspace/mnist/data
-      - mnist/model:/workspace/mnist/model
-      - mnist/results:/workspace/mnist/results
+      - mnist:/workspace/mnist
+      # - mnist/data:/workspace/mnist/data
+      # - mnist/model:/workspace/mnist/model
+      # - mnist/results:/workspace/mnist/results
       # - ./mnist/data:/workspace/mnist/data
       # - ./mnist/model:/workspace/mnist/model
       # - ./mnist/results:/workspace/mnist/results
