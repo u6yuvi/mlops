@@ -1,0 +1,9 @@
+FROM u6yuvi/pytorch-cpu
+
+WORKDIR /workspace
+
+COPY model.py /workspace/
+
+COPY infer.py /workspace/
+
+CMD ["python","infer.py"]

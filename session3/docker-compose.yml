@@ -5,10 +5,13 @@ services:
       context: ./
       dockerfile: Dockerfile.train
     volumes:
-      - ./model:/workspace/model
-      - ./data:/workspace/data
+      # - mnist:/workspace/mnist
+      # - ./mnist/model:/workspace/mnist/model
+      # - ./mnist/data:/workspace/mnist/data
+      - mnist/model:/workspace/mnist/model
+      - mnist/data:/workspace/mnist/data
     restart: on-failure
-    command: bash -c "make run-training"
+    command: python train.py --resume
     # command: python train.py add cli args here as to where the model is supposed to be stored
 
   evaluate:
@@ -18,15 +21,33 @@ services:
 
     #Mount volumes
     volumes:
-      - ./data:/workspace/data
-      - ./model:/workspace/model
+      # - mnist:/workspace/mnist
+      # - ./mnist/data:/workspace/mnist/data
+      # - ./mnist/model:/workspace/mnist/model
+      - mnist/data:/workspace/mnist/data
+      - mnist/model:/workspace/mnist/model
     command: python eval.py
     #also mount the mnist volume
 
     # Run the evaluation command
     # command: python eval.py maybe add command line argument here, like where the model is located
 
-  # infer:
+  infer:
+    build:
+      context: ./
+      dockerfile: Dockerfile.infer
+
+    #Mount volumes
+    volumes:
+      # - mnist:/workspace/mnist
+      - mnist/data:/workspace/mnist/data
+      - mnist/model:/workspace/mnist/model
+      - mnist/results:/workspace/mnist/results
+      # - ./mnist/data:/workspace/mnist/data
+      # - ./mnist/model:/workspace/mnist/model
+      # - ./mnist/results:/workspace/mnist/results
+    command: python infer.py
+
   #   # Build the inference service
   #   # ...
 
@@ -35,3 +56,7 @@ services:
 
   #   # Run the inference command
   #   # command: python infer.py
+
+volumes:
+  mnist:
+

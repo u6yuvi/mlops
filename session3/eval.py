@@ -44,13 +44,13 @@ def main():
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
     ])
-    test_dataset = datasets.MNIST('./data', train=False, transform=transform)
+    test_dataset = datasets.MNIST('./mnist/data', train=False, transform=transform)
     test_loader = DataLoader(test_dataset, **kwargs)
     model = Net().to(device)
-    model.load_state_dict(torch.load("./model/mnist_cnn.pt"))
+    model.load_state_dict(torch.load("./mnist/model/mnist_cnn.pt"))
     eval_results = test_epoch(model, device, test_loader)
 
-    with open('./model/eval_results.json', 'w') as f:
+    with open('./mnist/model/eval_results.json', 'w') as f:
         json.dump(eval_results, f)
 
 if __name__ == "__main__":

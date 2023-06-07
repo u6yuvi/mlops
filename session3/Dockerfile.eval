@@ -3,3 +3,7 @@ FROM u6yuvi/pytorch-cpu
 WORKDIR /workspace
 
 COPY eval.py /workspace 
+
+COPY model.py /workspace
+
+CMD ["python","eval.py"]

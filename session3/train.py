@@ -23,7 +23,7 @@ def train_epoch(epoch, args, model, device, data_loader, optimizer):
                 100. * batch_idx / len(data_loader), loss.item()))
             if args.dry_run:
                 break
-    torch.save(model.state_dict(), "./model/mnist_cnn.pth")
+    torch.save(model.state_dict(), "./mnist/model/mnist_cnn.pth")
 
 def test_epoch(model, device, data_loader):
     model.eval()
@@ -73,27 +73,27 @@ def main():
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
     ])
-    train_dataset = datasets.MNIST('./data', train=True, download=True, transform=transform)
-    test_dataset = datasets.MNIST('./data', train=False, transform=transform)
+    train_dataset = datasets.MNIST('./mnist/data', train=True, download=True, transform=transform)
+    test_dataset = datasets.MNIST('./mnist/data', train=False, transform=transform)
     train_loader = DataLoader(train_dataset, **kwargs)
     test_loader = DataLoader(test_dataset, **kwargs)
     model = Net().to(device)
-    if os.path.isfile("./model/mnist_cnn.pt"):
-        model.load_state_dict(torch.load("./model/mnist_cnn.pt"))
+    if os.path.isfile("./mnist/model/mnist_cnn.pt"):
+        model.load_state_dict(torch.load("./mnist/model/mnist_cnn.pt"))
         print("Loaded the model from mnist_cnn.pt Skipping Training!")
     else:
         print("mnist_cnn.pt not found, training model...")
         if args.resume:
-            if not os.path.isfile("./model/mnist_cnn.pth"):
+            if not os.path.isfile("./mnist/model/mnist_cnn.pth"):
                 print("No checkpoint found to resume from.")
             else:
                 print("Resuming training from checkpoint...")
-                model.load_state_dict(torch.load("./model/mnist_cnn.pth"))
+                model.load_state_dict(torch.load("./mnist/model/mnist_cnn.pth"))
         optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
         for epoch in range(1, args.epochs + 1):
             train_epoch(epoch, args, model, device, train_loader, optimizer)
             test_epoch(model, device, test_loader)
-        torch.save(model.state_dict(), "./model/mnist_cnn.pt")
+        torch.save(model.state_dict(), "./mnist/model/mnist_cnn.pt")
 
 
 if __name__ == "__main__":
