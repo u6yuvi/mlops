@@ -1,0 +1,12 @@
+FROM u6yuvi/pytorch-cpu
+
+WORKDIR /workspace
+
+COPY model.py /workspace/
+
+# COPY Makefile /workspace/
+
+# RUN apt-get update -y && \
+#  	apt-get install -y make
+
+COPY train.py /workspace/

@@ -1,0 +1,8 @@
+*.pth
+*.pt
+*.pyc
+*.DS_Store
+*.json
+*.png
+*.gz
+*-ubyte
